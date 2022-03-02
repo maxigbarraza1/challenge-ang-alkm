@@ -1,0 +1,39 @@
+<div class="contenedor">
+    <div class="mb-5">
+        <h1 class="login-titulo">SUPER HERO SQUAD</h1>
+    </div>
+    
+    <div class="container">
+        <div class="row mt-2">
+            <div class="col-lg-5 offset-lg-3">
+                <div class="card text-center">
+                    <div class="card-body" *ngIf="!loading">
+                        <h1 class="card-title mb-4">INICIAR SESIÓN</h1>
+                        <form [formGroup]="loginForm" (ngSubmit)="login()" class="form">
+                            <div class="container-input">
+                                <div class="mb-4">
+                                    <input type="text" formControlName="usuario" class="form-control form-control-lg" placeholder="Correo electronico">
+                                    <span class="text-danger" *ngIf="loginForm.get('usuario')?.hasError('required') && loginForm.get('usuario')?.touched">
+                                        <strong>El correo electronico es necesario para iniciar sesion.</strong>
+                                    </span>
+                                    <span class="text-danger mt-1" *ngIf="loginForm.get('usuario')?.hasError('email') && loginForm.get('usuario')?.touched">
+                                        <strong>El correo electronico ingresado no es valido.</strong>
+                                    </span>
+                                </div>
+                                <div class="mb-4">
+                                    <input type="password" formControlName="password" class="form-control form-control-lg" placeholder="Contraseña">
+                                    <span class="text-danger mt-1" *ngIf="loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched">
+                                        <strong>La contraseña es necesaria para iniciar sesión.</strong>
+                                    </span>
+                                </div>
+                            </div>
+                            <button type="submit" [disabled]="loginForm.invalid" class="btn-sm btn">INGRESAR</button>
+                        </form>
+    
+                    </div>
+                    <app-spinner *ngIf="loading"></app-spinner>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

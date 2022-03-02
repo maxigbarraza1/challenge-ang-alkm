@@ -1,0 +1,267 @@
+<div class="container-fluid container-principal">
+    
+    <div class="contenedor flex-column">
+        <div class="row my-3">
+            <form action="" [formGroup]="searchForm" class="form-text-center" (ngSubmit)="search()">
+                <div class="input-group col-md-4">
+                    <input type="search" placeholder="Spiderman..." formControlName="input" class="form-control  border-right-0 border">
+                    <span class="input-group-append">
+                        <button class="btn btn-outline" type="submit">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </span>
+                </div>
+                <span class="text-danger" *ngIf="searchForm.get('input')?.hasError('required') && searchForm.get('input')?.touched">
+                    <strong>Ingrese una busqueda por favor.</strong>
+                </span>
+            </form>
+        </div>
+
+
+        <div class="container mb-3">
+            <app-spinner *ngIf="loading"></app-spinner>
+            <div class="d-flex flex-row flex-nowrap overflow-auto px-2" *ngIf="!loading">
+                <div class="search-hero-container" *ngFor="let hero of searchResult">
+                    <div class="card search-card-hero"
+                    [ngClass]="{'evil-hero': hero.biography.alignment === 'bad',
+                                'good-hero': hero.biography.alignment === 'good',
+                                'neutral-hero': hero.biography.alignment === 'neutral',
+                                'non-alignment-hero': hero.biography.alignment === '-'}">
+                        <img src="{{hero.image.url}}" class="card-img-top mt-2" alt="">
+                        <div class="card-body w-100">
+                            <h5 class="card-title">{{hero.name}}</h5>
+                            <div class="card-icons">
+                                <i class="fa-solid fa-circle-plus card-icon" (click)="addToMyTeam(hero)"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="contenedor text-center">
+        <div class="row">
+            <!-- Powerstats -->
+            <div class="col-lg-4 mt-2 contenedor-estadisticas">
+                <h5 class="titulo mb-6">POWERSTATS</h5>
+                <br>
+                
+                <div class="stats">
+                    <div style="width: 70%;" class="mb-4">
+                        <h4 class="stats-title">{{globalStats[0].name | uppercase}} (main)</h4>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-background" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                            [style.width]="(((getNumerador(0))/(getDenominador()))*100)+'%'"
+                            *ngIf="myTeam.length>0">
+                            </div>
+                            <div class="progress-bar progress-bar-background" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                            [style.width]="((getNumerador(0)/(getDenominador()))*100)+'%'"
+                            *ngIf="myTeam.length===0">
+                            </div>
+                            <span class="progress-value">{{globalStats[0].value}}</span>
+                        </div>
+                    </div>
+                    <br>
+
+                    <div style="width: 70%;" class="mb-4">
+                        <h4 class="stats-title">{{globalStats[1].name | uppercase}}</h4>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-background" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                            [style.width]="(((globalStats[1].value)/(getDenominador()))*100)+'%'">
+                            </div>
+                            <span class="progress-value">{{globalStats[1].value}}</span>
+                        </div>
+                    </div>
+                    <br>
+                    
+                    <div style="width: 70%;" class="mb-4">
+                        <h4 class="stats-title">{{globalStats[2].name | uppercase}}</h4>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-background" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                            [style.width]="(((globalStats[2].value)/(getDenominador()))*100)+'%'">
+                            </div>
+                            <span class="progress-value">{{globalStats[2].value}}</span>
+                        </div>
+                    </div>
+                    <br>
+                    
+                    <div style="width: 70%;" class="mb-4">
+                        <h4 class="stats-title">{{globalStats[3].name | uppercase}}</h4>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-background" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                            [style.width]="(((globalStats[3].value)/(getDenominador()))*100)+'%'">
+                            </div>
+                            <span class="progress-value">{{globalStats[3].value}}</span>
+                        </div>
+                    </div>
+                    <br>
+                    
+                    <div style="width: 70%;" class="mb-4">
+                        <h4 class="stats-title">{{globalStats[4].name | uppercase}}</h4>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-background" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                            [style.width]="(((globalStats[4].value)/(getDenominador()))*100)+'%'">
+                            </div>
+                            <span class="progress-value">{{globalStats[4].value}}</span>
+                        </div>
+                    </div>
+                    <br>
+                    
+                    <div style="width: 70%;" class="mb-4">
+                        <h4 class="stats-title">{{globalStats[5].name | uppercase}}</h4>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-background" role="progressbar" aria-valuemin="0"
+                            [style.width]="(((globalStats[5].value)/(getDenominador()))*100)+'%'"
+                            >
+                            </div>
+                            <span class="progress-value">{{globalStats[5].value}}</span>
+                        </div>
+                    </div>
+                    <br>
+                    
+                    <div class="row text-center container-avg-stats">
+                        <div class="card card-avg-stats col">
+                            <div class="card-body">
+                                <h4 class="card-title card-avg-title">AVG.WEIGHT</h4>
+                                <h5 class="card-subtitle card-avg-subtitle">{{AVGWeight | number : '1.2-2'}}</h5>
+                            </div>
+                        </div>
+                        <div class="card card-avg-stats col">
+                            <div class="card-body">
+                                <h4 class="card-title card-avg-title">AVG.HEIGHT</h4>
+                                <h5 class="card-subtitle card-avg-subtitle">{{AVGHeight | number : '1.2-2'}}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Myteam -->
+            <div class="col-lg-8 mt-2">
+                <h5 class="titulo mb-2">YOUR TEAM</h5>
+                <h6 class="subtitulo mb-2">{{myTeam.length}}/6</h6>
+
+                <div class="container d-flex flex-row flex-wrap justify-content-center">
+                    <div class="col-lg-3 mx-4 team-container"
+                    *ngFor="let hero of myTeam">
+                        <!-- MODAL -->
+                        <ng-template #content let-modal class="container-modal">
+                            <div class="modal-header"
+                            [ngClass]="{'evil-hero': hero.biography.alignment === 'bad',
+                                        'good-hero': hero.biography.alignment === 'good',
+                                        'neutral-hero': hero.biography.alignment === 'neutral'}">
+                                <h3 class="modal-title text-center w-100 text-white" id="modal-basic-title">{{hero.name | uppercase}}</h3>
+                                <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+                            </div>
+                            <div class="modal-body w-100"
+                            [ngClass]="{'evil-hero': hero.biography.alignment === 'bad',
+                                        'good-hero': hero.biography.alignment === 'good',
+                                        'neutral-hero': hero.biography.alignment === 'neutral'}">
+                                <img src="{{hero.image.url}}" class="modal-img" alt="">
+                                <div class="modal-info text-center mt-3">
+                                    <div class="row mb-2">
+                                        <h4>Alias</h4>
+                                        <h6 class="text-white">{{hero.biography.aliases}}</h6>
+                                    </div>
+                                    <div class="row">
+                                        <div class="info-real-name info">
+                                            <p><strong>Real name: </strong></p>
+                                            <p class="px-2 text-white">{{hero.biography["full-name"]}}</p>
+                                        </div>
+                                        <div class="info-peso info">
+                                            <p><strong>Weigth: </strong></p>
+                                            <p class="px-2 text-white">{{hero.appearance.weight[1]}}</p>
+                                        </div>
+                                        <div class="info-altura info">
+                                            <p><strong>Height: </strong></p>
+                                            <p class="px-2 text-white">{{hero.appearance.height[1]}}</p>
+                                        </div>
+                                        <div class="info-ojos info">
+                                            <p><strong>Eye color: </strong></p>
+                                            <p class="px-2 text-white">{{hero.appearance["eye-color"]}}</p>
+                                        </div>
+                                        <div class="info-cabello info">
+                                            <p><strong>Hair color: </strong></p>
+                                            <p class="px-2 text-white">{{hero.appearance["hair-color"]}}</p>
+                                        </div>
+                                        <div class="info-trabajo info">
+                                            <p><strong>Work: </strong></p>
+                                            <p class="px-2 text-white">{{hero.work.occupation}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <div class="card card-team mb-3" style="width:100%;"
+                            [ngClass]="{'evil-hero': hero.biography.alignment === 'bad',
+                                'good-hero': hero.biography.alignment === 'good',
+                                'neutral-hero': hero.biography.alignment === 'neutral',
+                                'non-alignment-hero': hero.biography.alignment === '-'}"
+                            (click)="openModal(content)">
+                            <div class="card-body card-body-team" style="width: 100%;">
+                                <h5 class="card-title pt-2">{{hero.name}}</h5>
+                                <img src="{{hero.image.url}}" alt="" class="card-img-top card-image pb-2">
+                                <div class="card-hero-stats">
+                                    <div class="stats pt-4 pb-1">
+                                        <div style="width: 100%;" class="mb-4">
+                                            <h4 class="stats-team-title mb-2">Inteligencia</h4>
+                                            <div class="progress" style="height: 8px;">
+                                                <div class="progress-bar progress-bar-background" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                                                [style.width]="hero.powerstats.intelligence+'%'">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="width: 100%;" class="mb-4">
+                                            <h4 class="stats-team-title mb-2">Fuerza</h4>
+                                            <div class="progress" style="height: 8px;">
+                                                <div class="progress-bar progress-bar-background" role="progressbar"  aria-valuemin="0" aria-valuemax="100"
+                                                [style.width]="hero.powerstats.strength+'%'">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="width: 100%;" class="mb-4">
+                                            <h4 class="stats-team-title mb-2">Velocidad</h4>
+                                            <div class="progress" style="height: 8px;">
+                                                <div class="progress-bar progress-bar-background" role="progressbar"  aria-valuemin="0" aria-valuemax="100"
+                                                [style.width]="hero.powerstats.speed+'%'">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="width: 100%;" class="mb-4">
+                                            <h4 class="stats-team-title mb-2">Durabilidad</h4>
+                                            <div class="progress" style="height: 8px;">
+                                                <div class="progress-bar progress-bar-background" role="progressbar"  aria-valuemin="0" aria-valuemax="100"
+                                                [style.width]="hero.powerstats.durability+'%'">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="width: 100%;" class="mb-4">
+                                            <h4 class="stats-team-title mb-2">Poder</h4>
+                                            <div class="progress" style="height: 8px;">
+                                                <div class="progress-bar progress-bar-background" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                                                [style.width]="hero.powerstats.power+'%'">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="width: 100%;" class="mb-4">
+                                            <h4 class="stats-team-title mb-2">Combate</h4>
+                                            <div class="progress" style="height: 8px;">
+                                                <div class="progress-bar progress-bar-background" role="progressbar"  aria-valuemin="0" aria-valuemax="100"
+                                                [style.width]="hero.powerstats.combat+'%'">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-hero-actions">
+                                    <i class="fa-solid fa-trash" (click)="deleteHero(hero)" ></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

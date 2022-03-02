@@ -1,0 +1,12 @@
+{
+    "/api":{
+        "target": "https://superheroapi.com/api/",
+        "secure": false,
+        "pathRewrite":{
+            "^/api": ""
+        },
+        "changeOrigin":true,
+        "loglevel": "debug",
+        "timeout": 7000
+    }
+}
